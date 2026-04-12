@@ -18,7 +18,8 @@ export default defineConfig({
             // Also making this configurable to an environment variable in case it
             // needs to be changed later.
             '/api': {
-                target: 'http://backend:8080',
+                // target: 'http://backend:8080',
+                target: 'http://localhost:8080',
                 changeOrigin: true,
                 secure: false,
             }
