@@ -11,6 +11,7 @@ const StudentList = () => {
     const [newStudentName, setNewStudentName] = useState("");
     const [newStudentMajor, setNewStudentMajor] = useState("");
     const [newStudentGPA, setNewStudentGPA] = useState("");
+    const [statusMsg, setStatusMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
     const [editingStudentId, setEditingStudentId] = useState<number | null>(null);
     const [editForm, setEditorForm] = useState({
         name: "",
@@ -34,21 +35,25 @@ const StudentList = () => {
         // inputs always want to handle strings, so convert the max size to a number
         const numericGPA = parseFloat(newStudentGPA.trim());
 
-        // try to save the course.
-        const savedCourse = await StudentService.addStudent(
-            { name: newStudentName,
-                major: newStudentMajor,
-                gpa: numericGPA,
-            });
-        console.log("I saved the students--now, to update the fields.")
-        // refresh the list of courses
-        await loadStudents();
-        //reset all the fields to clear the data
+        try {
+            // try to save the course.
+            const savedCourse = await StudentService.addStudent(
+                { name: newStudentName,
+                    major: newStudentMajor,
+                    gpa: numericGPA,
+                });
+            console.log("I saved the students--now, to update the fields.")
+            // refresh the list of courses
+            await loadStudents();
+            //reset all the fields to clear the data
 
-        setNewStudentName(""); // Clear the input
-        setNewStudentMajor("");
-        setNewStudentGPA("");
-
+            setNewStudentName(""); // Clear the input
+            setNewStudentMajor("");
+            setNewStudentGPA("");
+            setStatusMsg({ text: "Student added successfully!", type: "success" });
+        } catch (err) {
+            setStatusMsg({ text: "Failed to add student.", type: "error" });
+        }
     };
 
     const handleEditClick = (student: any) => {
