@@ -81,8 +81,10 @@ const StudentList = () => {
             // Close the edit row and refresh the list
             setEditingStudentId(null);
             await loadStudents();
+            setStatusMsg({ text: "Student updated successfully!", type: "success" });
         } catch (err) {
             console.error("Failed to update course: ", err);
+            setStatusMsg({ text: "Failed to update student.", type: "error" });
         }
     };
 
@@ -91,8 +93,10 @@ const StudentList = () => {
             await StudentService.deleteStudent(id);
             // This triggers a re-render without a page refresh!
             setStudents(students.filter(s => s.id !== id));
+            setStatusMsg({ text: "Student deleted.", type: "success" });
         } catch (err) {
             alert("Delete failed!");
+            setStatusMsg({ text: "Failed to delete student.", type: "error" });
         }
     };
 
@@ -108,6 +112,11 @@ const StudentList = () => {
 
 
     return <div>
+        {statusMsg && (
+            <div id="status-message" style={{ color: statusMsg.type === 'success' ? 'green' : 'red' }}>
+                {statusMsg.text}
+            </div>
+        )}
         <div id = "add-student-fields" className="student-container">
             <input id = "new-student-name"
                 value={newStudentName}

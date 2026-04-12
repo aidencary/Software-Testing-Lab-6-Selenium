@@ -20,6 +20,7 @@ const CourseList: React.FC = () => {
         room: ""
     });
     const [studentsToRemove, setStudentsToRemove] = useState<Record<number, string>>({});
+    const [statusMsg, setStatusMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
     const [allStudents, setAllStudents] = useState<any[]>([]);
     // Keeps track of the selected student for each row.
     // Example: { 1: "105", 2: "108" } -> Course 1 selected Student 105
@@ -59,8 +60,10 @@ const CourseList: React.FC = () => {
 
             // Optional: Reset the dropdown for this row back to default
             setSelectedStudents({ ...selectedStudents, [courseId]: "" });
+            setStatusMsg({ text: "Student added to course!", type: "success" });
         } catch (err) {
             console.error("Failed to add student to course:", err);
+            setStatusMsg({ text: "Failed to add student to course.", type: "error" });
         }
     };
 
@@ -82,8 +85,10 @@ const CourseList: React.FC = () => {
 
             // Reset the dropdown for this row
             setStudentsToRemove({ ...studentsToRemove, [courseId]: "" });
+            setStatusMsg({ text: "Student removed from course!", type: "success" });
         } catch (err) {
             console.error("Failed to remove student:", err);
+            setStatusMsg({ text: "Failed to remove student.", type: "error" });
         }
     };
 
@@ -112,8 +117,10 @@ const CourseList: React.FC = () => {
             // Close the edit row and refresh the list
             setEditingCourseId(null);
             await loadCourses();
+            setStatusMsg({ text: "Course updated successfully!", type: "success" });
         } catch (err) {
             console.error("Failed to update course: ", err);
+            setStatusMsg({ text: "Failed to update course.", type: "error" });
         }
     };
 
@@ -122,8 +129,10 @@ const CourseList: React.FC = () => {
             await CourseService.deleteCourse(id);
             // This triggers a re-render without a page refresh!
             setCourses(courses.filter(c => c.id !== id));
+            setStatusMsg({ text: "Course deleted.", type: "success" });
         } catch (err) {
             alert("Delete failed!");
+            setStatusMsg({ text: "Failed to delete course.", type: "error" });
         }
     };
 
@@ -131,24 +140,28 @@ const CourseList: React.FC = () => {
         // inputs always want to handle strings, so convert the max size to a number
         const numericSize = parseInt(newCourseMaxSize.trim());
         const numericInstructor = parseInt(newCourseInstructor.trim());
-        // try to save the course.
-        const savedCourse = await CourseService.addCourse(
-            { name: newCourseName,
-            instructor: numericInstructor,
-            maxSize: numericSize,
-            room: newCourseRoom,
-            roster: undefined
-            });
-        console.log("I saved the courses--now, to update the fields.")
-        // refresh the list of courses
-        await loadCourses();
-        //reset all the fields to clear the data
+        try {
+            // try to save the course.
+            const savedCourse = await CourseService.addCourse(
+                { name: newCourseName,
+                instructor: numericInstructor,
+                maxSize: numericSize,
+                room: newCourseRoom,
+                roster: undefined
+                });
+            console.log("I saved the courses--now, to update the fields.")
+            // refresh the list of courses
+            await loadCourses();
+            //reset all the fields to clear the data
 
-        setNewCourseName(""); // Clear the input
-        setNewCourseInstructor("");
-        setNewCourseMaxSize("");
-        setNewCourseRoom("");
-
+            setNewCourseName(""); // Clear the input
+            setNewCourseInstructor("");
+            setNewCourseMaxSize("");
+            setNewCourseRoom("");
+            setStatusMsg({ text: "Course added successfully!", type: "success" });
+        } catch (err) {
+            setStatusMsg({ text: "Failed to add course.", type: "error" });
+        }
             };
 
     // Fetch data on component load
@@ -162,6 +175,11 @@ const CourseList: React.FC = () => {
     return (
 
         <div>
+            {statusMsg && (
+                <div id="status-message" style={{ color: statusMsg.type === 'success' ? 'green' : 'red' }}>
+                    {statusMsg.text}
+                </div>
+            )}
             <div id="new-course-fields" className="course-container">
                 <input id="new-course-name"
                     value={newCourseName}
