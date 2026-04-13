@@ -137,16 +137,20 @@ const CourseList: React.FC = () => {
     };
 
     const handleAdd = async () => {
+        const liveName = (document.getElementById('new-course-name') as HTMLInputElement | null)?.value ?? newCourseName;
+        const liveInstructor = (document.getElementById('new-course-instructor') as HTMLInputElement | null)?.value ?? newCourseInstructor;
+        const liveMaxSize = (document.getElementById('new-course-max-size') as HTMLInputElement | null)?.value ?? newCourseMaxSize;
+        const liveRoom = (document.getElementById('new-course-room') as HTMLInputElement | null)?.value ?? newCourseRoom;
         // inputs always want to handle strings, so convert the max size to a number
-        const numericSize = parseInt(newCourseMaxSize.trim());
-        const numericInstructor = parseInt(newCourseInstructor.trim());
+        const numericSize = parseInt(liveMaxSize.trim());
+        const numericInstructor = parseInt(liveInstructor.trim());
         try {
             // try to save the course.
             const savedCourse = await CourseService.addCourse(
-                { name: newCourseName,
+                { name: liveName,
                 instructor: numericInstructor,
                 maxSize: numericSize,
-                room: newCourseRoom,
+                room: liveRoom,
                 roster: undefined
                 });
             console.log("I saved the courses--now, to update the fields.")

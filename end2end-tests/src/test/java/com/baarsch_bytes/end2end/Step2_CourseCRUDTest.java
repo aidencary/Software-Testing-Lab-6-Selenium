@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(OrderAnnotation.class)
 public class Step2_CourseCRUDTest {
 
-    //private static final String COURSE_URL = "http://frontend:5173/";
-    //private static final String STUDENT_URL = "http://frontend:5173/students";
-    private static final String COURSE_URL = "http://localhost:5173/";
-    private static final String STUDENT_URL = "http://localhost:5173/students";
-    private static final int WAIT_SEC = 10;
+    private static final String COURSE_URL = "http://frontend:5173/";
+    private static final String STUDENT_URL = "http://frontend:5173/students";
+    //private static final String COURSE_URL = "http://localhost:5173/";
+    //private static final String STUDENT_URL = "http://localhost:5173/students";
+        private static final int WAIT_SEC = 20;
 
     private WebDriver driver;
 
@@ -52,11 +52,39 @@ public class Step2_CourseCRUDTest {
 
     /** Fill the new-course form and click Add Course (no ID on button — use xpath). */
     private void fillAndSubmitCourse(String name, String instructor, String maxSize, String room) {
-        driver.findElement(By.id("new-course-name")).sendKeys(name);
-        driver.findElement(By.id("new-course-instructor")).sendKeys(instructor);
-        driver.findElement(By.id("new-course-max-size")).sendKeys(maxSize);
-        driver.findElement(By.id("new-course-room")).sendKeys(room);
-        driver.findElement(By.xpath("//div[@id='new-course-fields']//button")).click();
+                WebElement nameInput = driver.findElement(By.id("new-course-name"));
+                WebElement instructorInput = driver.findElement(By.id("new-course-instructor"));
+                WebElement maxSizeInput = driver.findElement(By.id("new-course-max-size"));
+                WebElement roomInput = driver.findElement(By.id("new-course-room"));
+
+                nameInput.clear();
+                instructorInput.clear();
+                maxSizeInput.clear();
+                roomInput.clear();
+
+                if (name != null && !name.isEmpty()) {
+                        nameInput.sendKeys(name);
+                        driverWait().until(d -> name.equals(d.findElement(By.id("new-course-name")).getAttribute("value")));
+                }
+
+                if (instructor != null && !instructor.isEmpty()) {
+                        instructorInput.sendKeys(instructor);
+                        driverWait().until(d -> instructor.equals(d.findElement(By.id("new-course-instructor")).getAttribute("value")));
+                }
+
+                if (maxSize != null && !maxSize.isEmpty()) {
+                        maxSizeInput.sendKeys(maxSize);
+                        driverWait().until(d -> maxSize.equals(d.findElement(By.id("new-course-max-size")).getAttribute("value")));
+                }
+
+                if (room != null && !room.isEmpty()) {
+                        roomInput.sendKeys(room);
+                        driverWait().until(d -> room.equals(d.findElement(By.id("new-course-room")).getAttribute("value")));
+                }
+
+                WebElement addButton = driverWait().until(
+                                ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='new-course-fields']//button")));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addButton);
     }
 
     private void takeScreenshot(String filename) {

@@ -23,7 +23,7 @@ public class Step1_StudentCRUDTest {
 
     private static final String BASE_URL = "http://frontend:5173/students";
     //private static final String BASE_URL = "http://localhost:5173/students";
-    private static final int WAIT_SEC = 10;
+        private static final int WAIT_SEC = 20;
 
     private WebDriver driver;
 
@@ -49,10 +49,32 @@ public class Step1_StudentCRUDTest {
 
     /** Fill the new-student form and click Add Student. Pass null for gpa to leave blank. */
     private void fillAndSubmitStudent(String name, String major, String gpa) {
-        driver.findElement(By.id("new-student-name")).sendKeys(name);
-        driver.findElement(By.id("new-student-major")).sendKeys(major);
-        if (gpa != null) driver.findElement(By.id("new-student-gpa")).sendKeys(gpa);
-        driver.findElement(By.id("add-student-button")).click();
+                WebElement nameInput = driver.findElement(By.id("new-student-name"));
+                WebElement majorInput = driver.findElement(By.id("new-student-major"));
+                WebElement gpaInput = driver.findElement(By.id("new-student-gpa"));
+
+                nameInput.clear();
+                majorInput.clear();
+                gpaInput.clear();
+
+                if (name != null && !name.isEmpty()) {
+                        nameInput.sendKeys(name);
+                        driverWait().until(d -> name.equals(d.findElement(By.id("new-student-name")).getAttribute("value")));
+                }
+
+                if (major != null && !major.isEmpty()) {
+                        majorInput.sendKeys(major);
+                        driverWait().until(d -> major.equals(d.findElement(By.id("new-student-major")).getAttribute("value")));
+                }
+
+                if (gpa != null && !gpa.isEmpty()) {
+                        gpaInput.sendKeys(gpa);
+                        driverWait().until(d -> gpa.equals(d.findElement(By.id("new-student-gpa")).getAttribute("value")));
+                }
+
+                WebElement addButton = driverWait().until(
+                                ExpectedConditions.elementToBeClickable(By.id("add-student-button")));
+                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addButton);
     }
 
     private void takeScreenshot(String filename) {

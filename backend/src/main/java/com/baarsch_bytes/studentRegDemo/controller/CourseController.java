@@ -130,7 +130,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCourse(@PathVariable Long courseId) {
+    public ResponseEntity<String> deleteCourse(@PathVariable("id") Long courseId) {
         if (repository.existsById(courseId)) {
             repository.deleteById(courseId);
             return ResponseEntity.ok("Course " + courseId + " deleted successfully");

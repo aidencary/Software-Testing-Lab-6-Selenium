@@ -49,6 +49,9 @@ export const CourseService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(course),
         });
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
         return response.text();
     },
 
@@ -58,10 +61,16 @@ export const CourseService = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(course),
         });
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
         return response.text();
     },
 
     async deleteCourse(id: number): Promise<void> {
-        await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
+        if (!response.ok) {
+            throw new Error(await response.text());
+        }
     }
 };

@@ -1,4 +1,4 @@
-where# /end2end-tests/Dockerfile
+# /end2end-tests/Dockerfile
 
 # 1. Use the official Maven image to compile and run tests
 # Because of container "Layering" this also brings in Ubuntu Linux
@@ -20,4 +20,4 @@ COPY pom.xml .
 COPY src ./src
 
 # 5. When the container starts, run the Maven test phase
-CMD ["mvn", "clean", "test"]
+CMD ["sh", "-lc", "until wget -qO- http://frontend:5173/ >/dev/null; do echo waiting-for-frontend; sleep 2; done; until wget -qO- http://backend:8080/api/students >/dev/null; do echo waiting-for-backend; sleep 2; done; mvn clean test"]

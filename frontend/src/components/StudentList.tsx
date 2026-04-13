@@ -32,14 +32,17 @@ const StudentList = () => {
     };
 
     const handleAdd = async () => {
+        const liveName = (document.getElementById('new-student-name') as HTMLInputElement | null)?.value ?? newStudentName;
+        const liveMajor = (document.getElementById('new-student-major') as HTMLInputElement | null)?.value ?? newStudentMajor;
+        const liveGpa = (document.getElementById('new-student-gpa') as HTMLInputElement | null)?.value ?? newStudentGPA;
         // inputs always want to handle strings, so convert the max size to a number
-        const numericGPA = parseFloat(newStudentGPA.trim());
+        const numericGPA = parseFloat(liveGpa.trim());
 
         try {
             // try to save the course.
             const savedCourse = await StudentService.addStudent(
-                { name: newStudentName,
-                    major: newStudentMajor,
+                { name: liveName,
+                    major: liveMajor,
                     gpa: numericGPA,
                 });
             console.log("I saved the students--now, to update the fields.")

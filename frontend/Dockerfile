@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 4. Install dependencies
-RUN npm install
+RUN npm install --include=dev
 
 # 5. Copy the rest of your React code
 COPY . .

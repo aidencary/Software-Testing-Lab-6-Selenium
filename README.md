@@ -1,3 +1,7 @@
+# Software Testing Lab 6 - Selenium
+- Link to spreadsheet with test cases and component identification: https://docs.google.com/spreadsheets/d/1sCFsYqJDbTEZPkhhnT78DUWYHXquGM1UgX_JBbBRZts/edit?usp=sharing
+
+## Baarsch Comments
 This is a demonstration project used for CSCI 4325 Software Testing at the University of Central Arkansas.
 The purpose of this demonstration is to provide an environment for creating end-to-end tests using Selenium in a container environment.
 
