@@ -20,4 +20,4 @@ COPY pom.xml .
 COPY src ./src
 
 # 5. When the container starts, run the Maven test phase
-CMD ["mvn", "clean", "test"]
+CMD ["mvn", "clean", "test", "-Dbase.url=http://frontend:5173", "-Dscreenshot.dir=/tests/screenshots"]

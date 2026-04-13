@@ -22,6 +22,8 @@ services:
       # This connects the port of the computer to the port of the container--so when you
       # hit port 5173 in the browser, you will be directed to the container's 5173 port.
       # Syntax--> ContainerPort:RunnerPort (Laptop)
+    environment:
+      - VITE_API_TARGET=http://backend:8080
     depends_on:
       - backend
       # depends_on ensures the listed services start before the current service.
