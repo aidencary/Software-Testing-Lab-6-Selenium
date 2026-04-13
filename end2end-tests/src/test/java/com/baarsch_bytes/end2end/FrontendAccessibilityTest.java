@@ -13,6 +13,8 @@ import org.openqa.selenium.TakesScreenshot;
 // These are for saving the screen shots after they have been taken.
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +25,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FrontendAccessibilityTest {
 
+    private static final String FRONTEND_URL = resolveFrontendUrl();
     private WebDriver driver;
+
+    private static String resolveFrontendUrl() {
+        String containerUrl = "http://frontend:5173/index.html";
+        String localUrl = "http://localhost:5173/index.html";
+        return isHttpReachable(containerUrl) ? containerUrl : localUrl;
+    }
+
+    private static boolean isHttpReachable(String url) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(1000);
+            connection.setReadTimeout(1000);
+            int status = connection.getResponseCode();
+            return status >= 200 && status < 500;
+        } catch (IOException ex) {
+            return false;
+        }
+    }
 
     @BeforeEach
     public void setUp() {
@@ -45,7 +67,7 @@ public class FrontendAccessibilityTest {
     @Test
     public void testFrontendIsAccessible() {
         // 3. Navigate to the frontend using the Docker Compose service name
-        driver.get("http://frontend:5173/index.html");
+        driver.get(FRONTEND_URL);
 
         // 3.5 Take Screenshot
         takeScreenshot("frontend-load-success.png");

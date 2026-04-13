@@ -10,6 +10,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,11 +23,29 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(OrderAnnotation.class)
 public class Step1_StudentCRUDTest {
 
-    private static final String BASE_URL = "http://frontend:5173/students";
-    //private static final String BASE_URL = "http://localhost:5173/students";
+        private static final String BASE_URL = resolveBaseUrl();
         private static final int WAIT_SEC = 20;
 
     private WebDriver driver;
+
+        private static String resolveBaseUrl() {
+                String containerUrl = "http://frontend:5173/students";
+                String localUrl = "http://localhost:5173/students";
+                return isHttpReachable(containerUrl) ? containerUrl : localUrl;
+        }
+
+        private static boolean isHttpReachable(String url) {
+                try {
+                        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.setConnectTimeout(1000);
+                        connection.setReadTimeout(1000);
+                        int status = connection.getResponseCode();
+                        return status >= 200 && status < 500;
+                } catch (IOException ex) {
+                        return false;
+                }
+        }
 
     @BeforeEach
     public void setUp() {

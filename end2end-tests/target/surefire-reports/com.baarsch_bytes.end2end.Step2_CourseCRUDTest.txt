@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.baarsch_bytes.end2end.Step2_CourseCRUDTest
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 39.83 s -- in com.baarsch_bytes.end2end.Step2_CourseCRUDTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 50.55 s -- in com.baarsch_bytes.end2end.Step2_CourseCRUDTest

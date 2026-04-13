@@ -47,39 +47,23 @@ podman compose up -d
 podman compose --profile testing up --build end2end-tests
 ```
 
+## Maven verify command
+
+From the `end2end-tests/` directory, after frontend/backend are running, execute:
+
+```bash
+mvn clean verify
+```
+
+This project's Selenium tests are configured in `end2end-tests/pom.xml` and run in deterministic order.
+
 ---
 
 ## Running Locally (without Docker/Podman)
 
-Two URL settings must be changed before running locally, and reverted before running via Podman.
+No Selenium source edits are needed. Tests auto-detect whether `frontend` or `localhost` is reachable.
 
-### 1. Vite proxy — `frontend/vite.config.ts`
-
-Change the proxy target from the Docker service name to localhost:
-
-```
-// For local dev:
-target: 'http://localhost:8080',
-
-// For Podman (revert to this before running with podman compose):
-// target: 'http://backend:8080',
-```
-
-### 2. Selenium base URL — `end2end-tests/src/test/java/com/baarsch_bytes/end2end/Step1_StudentCRUDTest.java`
-
-Same swap for the test file:
-
-```java
-// For local dev:
-private static final String BASE_URL = "http://localhost:5173/students";
-
-// For Podman (revert to this before running with podman compose):
-// private static final String BASE_URL = "http://frontend:5173/students";
-```
-
-Do the same swap in `end2end-tests/src/test/java/com/baarsch_bytes/end2end/Step2_CourseCRUDTest.java`.
-
-### 3. Start servers and run tests
+### Start servers and run tests
 
 Open three terminals:
 
@@ -90,11 +74,9 @@ mvn spring-boot:run
 # Terminal 2 — frontend (from IdeaProjects/frontend/)
 npm run dev
 
-# Terminal 3 — run only the new tests (from IdeaProjects/end2end-tests/)
-mvn test
+# Terminal 3 — run full Selenium suite (from IdeaProjects/end2end-tests/)
+mvn clean verify
 ```
-
-The two pre-existing tests (FrontendAccessibilityTest, FrontendAccessibilityWaitsTest) use the Docker hostname and will fail when run locally — this is expected.
 
 ---
 

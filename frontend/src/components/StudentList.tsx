@@ -121,7 +121,7 @@ const StudentList = () => {
                 {statusMsg.text}
             </div>
         )}
-        <div id = "add-student-fields" className="student-container">
+        <div id = "new-student-fields" className="student-container">
             <input id = "new-student-name"
                 value={newStudentName}
                 onChange={(e) => setNewStudentName(e.target.value)}
