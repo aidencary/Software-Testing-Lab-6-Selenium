@@ -1,6 +1,9 @@
 # Software Testing Lab 6 - Selenium
 - Link to spreadsheet with test cases and component identification: https://docs.google.com/spreadsheets/d/1sCFsYqJDbTEZPkhhnT78DUWYHXquGM1UgX_JBbBRZts/edit?usp=sharing
 
+## Important Note
+- Frontend tests all work flawlessly when ran locally but run into several errors when running with Podman. I have been working tirelessly to get them to work to no avail with probes to find errors and more.
+- Some screenshots were able to be captured while some were not so successful. I have no idea what to do unfortunately. 
 ## Baarsch Comments
 This is a demonstration project used for CSCI 4325 Software Testing at the University of Central Arkansas.
 The purpose of this demonstration is to provide an environment for creating end-to-end tests using Selenium in a container environment.

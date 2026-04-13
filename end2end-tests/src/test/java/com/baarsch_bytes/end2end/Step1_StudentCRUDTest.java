@@ -74,7 +74,11 @@ public class Step1_StudentCRUDTest {
 
                 WebElement addButton = driverWait().until(
                                 ExpectedConditions.elementToBeClickable(By.id("add-student-button")));
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addButton);
+                try {
+                        addButton.click();
+                } catch (ElementNotInteractableException e) {
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addButton);
+                }
     }
 
     private void takeScreenshot(String filename) {

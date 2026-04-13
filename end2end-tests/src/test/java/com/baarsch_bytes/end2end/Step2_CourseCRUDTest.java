@@ -84,7 +84,11 @@ public class Step2_CourseCRUDTest {
 
                 WebElement addButton = driverWait().until(
                                 ExpectedConditions.elementToBeClickable(By.xpath("//div[@id='new-course-fields']//button")));
-                ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addButton);
+                try {
+                        addButton.click();
+                } catch (ElementNotInteractableException e) {
+                        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", addButton);
+                }
     }
 
     private void takeScreenshot(String filename) {

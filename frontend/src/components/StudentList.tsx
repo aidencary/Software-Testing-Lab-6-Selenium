@@ -55,7 +55,8 @@ const StudentList = () => {
             setNewStudentGPA("");
             setStatusMsg({ text: "Student added successfully!", type: "success" });
         } catch (err) {
-            setStatusMsg({ text: "Failed to add student.", type: "error" });
+            const reason = err instanceof Error ? err.message : 'Unknown error';
+            setStatusMsg({ text: `Failed to add student: ${reason}`, type: "error" });
         }
     };
 

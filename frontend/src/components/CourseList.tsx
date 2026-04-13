@@ -164,7 +164,8 @@ const CourseList: React.FC = () => {
             setNewCourseRoom("");
             setStatusMsg({ text: "Course added successfully!", type: "success" });
         } catch (err) {
-            setStatusMsg({ text: "Failed to add course.", type: "error" });
+            const reason = err instanceof Error ? err.message : 'Unknown error';
+            setStatusMsg({ text: `Failed to add course: ${reason}`, type: "error" });
         }
             };
 
