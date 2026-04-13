@@ -28,7 +28,7 @@ The backend is written using Maven, SpringBoot along with an H2 database for sim
 The frontend makes use of React and Typescript, along with a Vite webserver.
 The end2end-tests uses Maven and Selenium and is set up to run through the `testing` compose profile.
 
-Current expected result for the full test profile is:
+## Current expected result for the full test profile is:
 - 29 tests run
 - 0 failures
 - 0 errors
@@ -91,7 +91,7 @@ mvn spring-boot:run
 npm run dev
 
 # Terminal 3 — run only the new tests (from IdeaProjects/end2end-tests/)
-mvn test -Dtest=Step1_StudentCRUDTest
+mvn test
 ```
 
 The two pre-existing tests (FrontendAccessibilityTest, FrontendAccessibilityWaitsTest) use the Docker hostname and will fail when run locally — this is expected.
