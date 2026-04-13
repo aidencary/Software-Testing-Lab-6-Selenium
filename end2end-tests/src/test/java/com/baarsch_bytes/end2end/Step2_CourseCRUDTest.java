@@ -127,6 +127,21 @@ public class Step2_CourseCRUDTest {
         }
     }
 
+        private String findCourseIdByName(String name) {
+                WebElement nameCell = driver.findElement(
+                                By.xpath("//td[contains(@id,'course-name-') and text()='" + name + "']"));
+                return nameCell.getAttribute("id").replace("course-name-", "");
+        }
+
+        private String createCourseAndGetId(String name, String instructor, String maxSize, String room) {
+                driver.get(COURSE_URL);
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("new-course-name")));
+                fillAndSubmitCourse(name, instructor, maxSize, room);
+                driverWait().until(ExpectedConditions.presenceOfElementLocated(
+                                By.xpath("//td[contains(@id,'course-name-') and text()='" + name + "']")));
+                return findCourseIdByName(name);
+        }
+
     // CL1A1
     @Test
     @Order(1)
@@ -396,4 +411,109 @@ public class Step2_CourseCRUDTest {
         assertEquals(rosterBefore - 1,
                 Integer.parseInt(driver.findElement(By.id("course-roster-" + courseId)).getText()));
     }
+
+        // CL1B4
+        @Test
+        @Order(12)
+        public void testAddCourseBelowBoundaryInstructor() {
+                driver.get(COURSE_URL);
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("new-course-name")));
+
+                int before = driver.findElements(By.xpath("//tr[contains(@id,'course-row-')]")) .size();
+
+                fillAndSubmitCourse("TestCourseInstructor0", "0", "5", "MCS 338");
+
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+                takeScreenshot("CL1B4-add-course-instructor-below-boundary.png");
+
+                int after = driver.findElements(By.xpath("//tr[contains(@id,'course-row-')]")) .size();
+                assertEquals(before, after);
+        }
+
+        // CL1B5
+        @Test
+        @Order(13)
+        public void testAddCourseMissingMaxSize() {
+                driver.get(COURSE_URL);
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("new-course-name")));
+
+                int before = driver.findElements(By.xpath("//tr[contains(@id,'course-row-')]")) .size();
+
+                fillAndSubmitCourse("TestCourseNoMaxSize", "1", "", "MCS 338");
+
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+                takeScreenshot("CL1B5-add-course-missing-maxsize.png");
+
+                int after = driver.findElements(By.xpath("//tr[contains(@id,'course-row-')]")) .size();
+                assertEquals(before, after);
+        }
+
+        // CL2B1
+        @Test
+        @Order(14)
+        public void testEditCourseNameAboveBoundary() {
+                String originalName = "EditCourseNameHigh-" + System.nanoTime();
+                String courseId = createCourseAndGetId(originalName, "1", "5", "MCS 310");
+
+                driver.findElement(By.xpath(
+                                "//tr[@id='course-row-" + courseId + "']//button[@id='edit-course-button']")).click();
+
+                WebElement editName = driverWait().until(
+                                ExpectedConditions.visibilityOfElementLocated(By.id("edit-course-name")));
+                editName.clear();
+                editName.sendKeys("A".repeat(256));
+                driver.findElement(By.id("edit-course-save-button")).click();
+
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+                takeScreenshot("CL2B1-edit-course-name-above-boundary.png");
+
+                assertEquals(originalName, driver.findElement(By.id("course-name-" + courseId)).getText());
+        }
+
+        // CL2B2
+        @Test
+        @Order(15)
+        public void testEditCourseMissingRoom() {
+                String originalName = "EditCourseRoomMissing-" + System.nanoTime();
+                String courseId = createCourseAndGetId(originalName, "1", "5", "MCS 311");
+
+                String roomBefore = driver.findElement(By.id("course-room-" + courseId)).getText();
+
+                driver.findElement(By.xpath(
+                                "//tr[@id='course-row-" + courseId + "']//button[@id='edit-course-button']")).click();
+
+                WebElement editRoom = driverWait().until(
+                                ExpectedConditions.visibilityOfElementLocated(By.id("edit-course-room")));
+                editRoom.clear();
+                driver.findElement(By.id("edit-course-save-button")).click();
+
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+                takeScreenshot("CL2B2-edit-course-missing-room.png");
+
+                assertEquals(roomBefore, driver.findElement(By.id("course-room-" + courseId)).getText());
+        }
+
+        // CL2B3
+        @Test
+        @Order(16)
+        public void testEditCourseSizeBelowBoundary() {
+                String originalName = "EditCourseSizeLow-" + System.nanoTime();
+                String courseId = createCourseAndGetId(originalName, "1", "5", "MCS 312");
+
+                String sizeBefore = driver.findElement(By.id("course-max-size-" + courseId)).getText();
+
+                driver.findElement(By.xpath(
+                                "//tr[@id='course-row-" + courseId + "']//button[@id='edit-course-button']")).click();
+
+                WebElement editSize = driverWait().until(
+                                ExpectedConditions.visibilityOfElementLocated(By.id("edit-course-max-size")));
+                editSize.clear();
+                editSize.sendKeys("0");
+                driver.findElement(By.id("edit-course-save-button")).click();
+
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+                takeScreenshot("CL2B3-edit-course-size-below-boundary.png");
+
+                assertEquals(sizeBefore, driver.findElement(By.id("course-max-size-" + courseId)).getText());
+        }
 }

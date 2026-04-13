@@ -112,6 +112,21 @@ public class Step1_StudentCRUDTest {
         }
     }
 
+        private String findStudentIdByName(String name) {
+                WebElement nameCell = driver.findElement(
+                                By.xpath("//td[contains(@id,'student-name-') and text()='" + name + "']"));
+                return nameCell.getAttribute("id").replace("student-name-", "");
+        }
+
+        private String createStudentAndGetId(String name, String major, String gpa) {
+                driver.get(BASE_URL);
+                driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("new-student-name")));
+                fillAndSubmitStudent(name, major, gpa);
+                driverWait().until(ExpectedConditions.presenceOfElementLocated(
+                                By.xpath("//td[contains(@id,'student-name-') and text()='" + name + "']")));
+                return findStudentIdByName(name);
+        }
+
     // SL1A1
     @Test
     @Order(1)
@@ -424,5 +439,120 @@ public class Step1_StudentCRUDTest {
                 By.id("student-row-" + studentId)));
 
         assertTrue(driver.findElements(By.id("student-row-" + studentId)).isEmpty());
+    }
+
+    // SL2B1
+    @Test
+    @Order(17)
+    public void testEditStudentNameBelowBoundary() {
+        String originalName = "EditTargetNameLow-" + System.nanoTime();
+        String studentId = createStudentAndGetId(originalName, "Physics", "3.0");
+
+        driver.findElement(By.xpath(
+                "//tr[@id='student-row-" + studentId + "']//button[@id='edit-student-button']")).click();
+
+        WebElement editName = driverWait().until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("edit-student-name")));
+        editName.clear();
+        driver.findElement(By.id("edit-student-save-button")).click();
+
+        driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+        takeScreenshot("SL2B1-edit-student-name-below-boundary.png");
+
+        assertEquals(originalName, driver.findElement(By.id("student-name-" + studentId)).getText());
+    }
+
+    // SL2B2
+    @Test
+    @Order(18)
+    public void testEditStudentNameAboveBoundary() {
+        String originalName = "EditTargetNameHigh-" + System.nanoTime();
+        String studentId = createStudentAndGetId(originalName, "Physics", "3.0");
+
+        driver.findElement(By.xpath(
+                "//tr[@id='student-row-" + studentId + "']//button[@id='edit-student-button']")).click();
+
+        WebElement editName = driverWait().until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("edit-student-name")));
+        editName.clear();
+        editName.sendKeys("A".repeat(256));
+        driver.findElement(By.id("edit-student-save-button")).click();
+
+        driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+        takeScreenshot("SL2B2-edit-student-name-above-boundary.png");
+
+        assertEquals(originalName, driver.findElement(By.id("student-name-" + studentId)).getText());
+    }
+
+    // SL2B3
+    @Test
+    @Order(19)
+    public void testEditStudentMajorAboveBoundary() {
+        String originalName = "EditTargetMajorHigh-" + System.nanoTime();
+        String studentId = createStudentAndGetId(originalName, "Physics", "3.0");
+
+        String majorBefore = driver.findElement(By.id("student-major-" + studentId)).getText();
+
+        driver.findElement(By.xpath(
+                "//tr[@id='student-row-" + studentId + "']//button[@id='edit-student-button']")).click();
+
+        WebElement editMajor = driverWait().until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("edit-student-major")));
+        editMajor.clear();
+        editMajor.sendKeys("A".repeat(256));
+        driver.findElement(By.id("edit-student-save-button")).click();
+
+        driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+        takeScreenshot("SL2B3-edit-student-major-above-boundary.png");
+
+        assertEquals(majorBefore, driver.findElement(By.id("student-major-" + studentId)).getText());
+    }
+
+    // SL2B4
+    @Test
+    @Order(20)
+    public void testEditStudentGPAAboveMax() {
+        String originalName = "EditTargetGpaHigh-" + System.nanoTime();
+        String studentId = createStudentAndGetId(originalName, "Physics", "3.0");
+
+        String gpaBefore = driver.findElement(By.id("student-gpa-" + studentId)).getText();
+
+        driver.findElement(By.xpath(
+                "//tr[@id='student-row-" + studentId + "']//button[@id='edit-student-button']")).click();
+
+        WebElement editGpa = driverWait().until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("edit-student-gpa")));
+        editGpa.clear();
+        editGpa.sendKeys("4.1");
+        driver.findElement(By.id("edit-student-save-button")).click();
+
+        driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+        takeScreenshot("SL2B4-edit-student-gpa-above-max.png");
+
+        assertEquals(gpaBefore, driver.findElement(By.id("student-gpa-" + studentId)).getText());
+    }
+
+    // SL2B5
+    @Test
+    @Order(21)
+    public void testEditStudentGPABelowMin() {
+        String originalName = "EditTargetGpaLow-" + System.nanoTime();
+        String studentId = createStudentAndGetId(originalName, "Physics", "3.0");
+
+        String gpaBefore = driver.findElement(By.id("student-gpa-" + studentId)).getText();
+
+        driver.findElement(By.xpath(
+                "//tr[@id='student-row-" + studentId + "']//button[@id='edit-student-button']")).click();
+
+        WebElement editGpa = driverWait().until(
+                ExpectedConditions.visibilityOfElementLocated(By.id("edit-student-gpa")));
+        editGpa.clear();
+        editGpa.sendKeys("-0.1");
+        driver.findElement(By.id("edit-student-save-button")).click();
+
+        driverWait().until(ExpectedConditions.visibilityOfElementLocated(By.id("status-message")));
+        takeScreenshot("SL2B5-edit-student-gpa-below-min.png");
+
+        assertEquals(gpaBefore, driver.findElement(By.id("student-gpa-" + studentId)).getText());
     }
 }
